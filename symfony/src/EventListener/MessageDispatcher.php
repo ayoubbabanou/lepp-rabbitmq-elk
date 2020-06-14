@@ -21,30 +21,21 @@ class MessageDispatcher implements EventSubscriber
         return [
             Events::postPersist,
             Events::postUpdate,
-            Events::preRemove,
         ];
     }
 
+    public function postUpdate(LifecycleEventArgs $args){}
+
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->dispatch($args, __FUNCTION__);
+        $this->dispatch($args);
     }
 
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $this->dispatch($args, __FUNCTION__);
-    }
-
-    public function preRemove(LifecycleEventArgs $args)
-    {
-        $this->dispatch($args, __FUNCTION__);
-    }
-
-    private function dispatch(LifecycleEventArgs $args, string $operation)
+    public function dispatch(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
         if ($entity instanceof Book) {
-            $message = new BookMessage($entity->getId(), $operation);
+            $message = new BookMessage($entity->getId());
             $this->bus->dispatch($message);
         }
     }
